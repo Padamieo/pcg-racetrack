@@ -46,7 +46,12 @@
   "dependencies": {
     "gltf-loader": "^0.1.0",
     "gltf-loader-2": "^0.0.3",
+    "raw-loader": "^0.5.1",
     "three": "^0.93.0",
-    "three-gltf-loader": "^1.93.0"
+    "three-fbx-loader": "^1.0.3",
+    "three-gltf-loader": "^1.93.0",
+    "three-orbitcontrols": "^2.1.2",
+    "url-loader": "^1.0.1",
+    "webpack-obj-loader": "^1.0.4"
   }
 }

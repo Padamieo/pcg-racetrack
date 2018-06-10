@@ -1,54 +1,43 @@
-import * as THREE from 'three';
-import GLTFLoader from 'three-gltf-loader';
-import gltfFile from 'glTF/treeSmall.gltf';
-
-// export default function sayHello() {
-// 	return 'Hello World!';
-// }
+import {PerspectiveCamera, Scene, BoxGeometry, MeshNormalMaterial, Mesh, WebGLRenderer} from 'three';
+import OrbitControls from 'three-orbitcontrols';
+import FBXLoader from 'three-fbx-loader';
+import file from 'assets/FBX/treeSmall.fbx';
 
 var camera, scene, renderer;
 var geometry, material, mesh;
+var controls;
+var loaders;
 
-init();
-animate();
+export default function sayHello() {
+	init();
+	animate();
+}
 
 function init() {
-	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
+	camera = new PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
 	camera.position.z = 1;
-	scene = new THREE.Scene();
-	geometry = new THREE.BoxGeometry( 0.2, 0.2, 0.2 );
-	material = new THREE.MeshNormalMaterial();
-	mesh = new THREE.Mesh( geometry, material );
+	scene = new Scene();
+	geometry = new BoxGeometry( 0.2, 0.2, 0.2 );
+	material = new MeshNormalMaterial();
+	mesh = new Mesh( geometry, material );
 	scene.add( mesh );
-	renderer = new THREE.WebGLRenderer( { antialias: true } );
+
+	loaders = new FBXLoader();
+	loaders.load(file, function (object3d) {
+		scene.add(object3d);
+	});
+
+	renderer = new WebGLRenderer( { antialias: true } );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
 	loader();
 }
 
 function loader(){
-
-	const loader = new GLTFLoader();
-
-	// THREE.DRACOLoader.setDecoderPath( '/examples/js/libs/draco' );
-	// loader.setDRACOLoader( new THREE.DRACOLoader() );
-
-	loader.load(
-		// resource URL
-		gltfFile,
-		// called when the resource is loaded
-		function ( gltf ) {
-
-			scene.add( gltf.scene );
-
-			gltf.animations; // Array<THREE.AnimationClip>
-			gltf.scene; // THREE.Scene
-			gltf.scenes; // Array<THREE.Scene>
-			gltf.cameras; // Array<THREE.Camera>
-			gltf.asset; // Object
-
-		}
-	);
+	controls = new OrbitControls(camera, renderer.domElement);
+	controls.enableDamping = true;
+	controls.dampingFactor = 0.25;
+	controls.enableZoom = false;
 }
 
 function animate() {

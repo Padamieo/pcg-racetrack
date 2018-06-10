@@ -94,7 +94,7 @@
   },
   "buffers": [
     {
-      "uri": "treeSmall.bin",
+      "uri": "src/glTF/treeSmall.bin",
       "byteLength": 6552
     }
   ],

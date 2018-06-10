@@ -1,4 +1,4 @@
 import sayHello from './hello';
-import './index.scss';
+//import './index.scss';
 
 document.getElementById('root').innerHTML = sayHello();
