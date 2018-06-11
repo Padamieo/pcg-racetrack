@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -26,12 +25,8 @@ module.exports = {
 	},
 	module: {
 		rules: [{
-			enforce: 'pre', //to check source files, not modified by other loaders (like babel-loader)
-			test: /\.js$/,
-			loader: "eslint-loader"
-		},{
 			test: /\.fbx$/,
-			use: 'raw-loader'
+			use: 'file-loader'
 		},{
 			test: /\.js$/,
 			exclude: /node_modules/,
@@ -41,39 +36,12 @@ module.exports = {
 					presets: ['env']
 				}
 			}
-	  },{
-			test: /\.scss$/,
-			use: extractSass.extract({
-				use: [{
-					loader: 'css-loader',
-					options: {
-						sourceMap: true
-					}
-				}, {
-					loader: 'sass-loader',
-					options: {
-						sourceMap: true
-					}
-				}],
-				// use style-loader in development
-				fallback: 'style-loader'
-			})
-		}],
-		loaders: [
-			{
-				test: /\.obj$/,
-				loader: 'webpack-obj-loader'
-			}
-		]
+	  }]
 	},
 	plugins: [
 		new CleanWebpackPlugin(['dist'], {root: process.cwd()}),
-		new webpack.optimize.CommonsChunkPlugin({
-			name: 'vendor'
-		}),
 		new HtmlWebpackPlugin({
 			template: 'index.html'
-		}),
-		extractSass
+		})
 	]
 };

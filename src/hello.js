@@ -1,5 +1,6 @@
 import {PerspectiveCamera, Scene, BoxGeometry, MeshNormalMaterial, Mesh, WebGLRenderer} from 'three';
 import OrbitControls from 'three-orbitcontrols';
+
 import FBXLoader from 'three-fbx-loader';
 import file from 'assets/FBX/treeSmall.fbx';
 
@@ -17,21 +18,25 @@ function init() {
 	camera = new PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
 	camera.position.z = 1;
 	scene = new Scene();
-	geometry = new BoxGeometry( 0.2, 0.2, 0.2 );
+	// geometry = new BoxGeometry( 0.2, 0.2, 0.2 );
 	material = new MeshNormalMaterial();
-	mesh = new Mesh( geometry, material );
-	scene.add( mesh );
+	// mesh = new Mesh( geometry, material );
+	//scene.add( mesh );
 
 	loaders = new FBXLoader();
-	loaders.load(file, function (object3d) {
-		scene.add(object3d);
-	});
+
+	loaders.load('https://threejs.org/examples/models/fbx/Samba%20Dancing.fbx', load, (pro)=> console.log(pro), (e)=> console.log(e) );
 
 	renderer = new WebGLRenderer( { antialias: true } );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
 	loader();
 }
+
+function load(object3d) {
+	var m = new Mesh( object3d, material );
+	scene.add(m);
+};
 
 function loader(){
 	controls = new OrbitControls(camera, renderer.domElement);
