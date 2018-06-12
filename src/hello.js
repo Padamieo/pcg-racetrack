@@ -1,8 +1,19 @@
-import {PerspectiveCamera, Scene, BoxGeometry, MeshNormalMaterial, Mesh, WebGLRenderer} from 'three';
+import {
+	FaceColors,
+	DoubleSide,
+	PerspectiveCamera,
+	Scene,
+	BoxGeometry,
+	MeshNormalMaterial,
+	MeshBasicMaterial,
+	Mesh,
+	WebGLRenderer,
+	PlaneGeometry
+} from 'three';
 import OrbitControls from 'three-orbitcontrols';
 
 import FBXLoader from 'three-fbx-loader';
-import file from 'assets/FBX/treeSmall.fbx';
+import file from 'assets/FBX/untitled.fbx';
 
 var camera, scene, renderer;
 var geometry, material, mesh;
@@ -19,26 +30,51 @@ function init() {
 	camera.position.z = 1;
 	scene = new Scene();
 	// geometry = new BoxGeometry( 0.2, 0.2, 0.2 );
-	material = new MeshNormalMaterial();
+	//material = new MeshNormalMaterial();
 	// mesh = new Mesh( geometry, material );
 	//scene.add( mesh );
 
 	loaders = new FBXLoader();
 
-	loaders.load('https://threejs.org/examples/models/fbx/Samba%20Dancing.fbx', load, (pro)=> console.log(pro), (e)=> console.log(e) );
+	loaders.load(file, load, (pro)=> console.log(pro), (e)=> console.log(e) );
 
 	renderer = new WebGLRenderer( { antialias: true } );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
-	loader();
+	addPlane();
+	controls();
+}
+
+function addPlane(){
+	var geometry = new PlaneGeometry( 1, 1, 1 );
+	var material = new MeshBasicMaterial( {color: 0xffff00, side: DoubleSide} );
+	var plane = new Mesh( geometry, material );
+	plane.rotateX(1.5708);
+	plane.translateZ(0.5);
+	scene.add( plane );
 }
 
 function load(object3d) {
-	var m = new Mesh( object3d, material );
-	scene.add(m);
+	console.log(object3d);
+	var mesh = object3d.children[0];
+	console.log(mesh);
+	var materialObj = new MeshBasicMaterial({
+		color: 0xffffff,
+		vertexColors: FaceColors,
+		overdraw: 0.5,
+		side: DoubleSide
+	});
+	mesh.material = materialObj;
+	// mesh.traverse(function(child) {
+	// 	if (child instanceof Mesh) {
+	// 		child.material = materialObj;
+	// 	}
+	// });
+	//var mesh = new Mesh( object3d, material );
+	scene.add(mesh);
 };
 
-function loader(){
+function controls(){
 	controls = new OrbitControls(camera, renderer.domElement);
 	controls.enableDamping = true;
 	controls.dampingFactor = 0.25;
