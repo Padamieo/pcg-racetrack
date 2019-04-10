@@ -1,91 +1,64 @@
-import {
-	FaceColors,
-	DoubleSide,
-	PerspectiveCamera,
-	Scene,
-	BoxGeometry,
-	MeshNormalMaterial,
-	MeshBasicMaterial,
-	Mesh,
-	WebGLRenderer,
-	PlaneGeometry
-} from 'three';
-import OrbitControls from 'three-orbitcontrols';
+import * as BABYLON from 'babylonjs';
+import 'babylonjs-loaders';
+import a from './assets/scene.glb';
+// var createScene = function () {
+//
+//     // Create the scene space
+//     var scene = new BABYLON.Scene(engine);
+//
+//     // // Add a camera to the scene and attach it to the canvas
+//     // var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 2, BABYLON.Vector3.Zero(), scene);
+//     // camera.attachControl(canvas, true);
+//     //
+//     // // Add lights to the scene
+//     // var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), scene);
+//     // var light2 = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
+//     //
+//     // // Add and manipulate meshes in the scene
+//     // var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {}, scene);
+//
+//     return scene;
+//
+// };
 
-import FBXLoader from 'three-fbx-loader';
-import file from 'assets/FBX/untitled.fbx';
+var canvas = document.getElementById("renderCanvas"); // Get the canvas element
+// var gl = canvas.getContext('webgl');
+// console.log(gl.getContextAttributes());
+canvas.style.width = '100vw';
+canvas.style.height = '100vh';
+var engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 
-var camera, scene, renderer;
-var geometry, material, mesh;
-var controls;
-var loaders;
+/******* Add the create scene function ******/
+var createScene = function () {
 
-export default function sayHello() {
-	init();
-	animate();
-}
+    // Create the scene space
+    var scene = new BABYLON.Scene(engine);
 
-function init() {
-	camera = new PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 10 );
-	camera.position.z = 1;
-	scene = new Scene();
-	// geometry = new BoxGeometry( 0.2, 0.2, 0.2 );
-	//material = new MeshNormalMaterial();
-	// mesh = new Mesh( geometry, material );
-	//scene.add( mesh );
+    // Add a camera to the scene and attach it to the canvas
+    var camera = new BABYLON.ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 2, new BABYLON.Vector3(0,0,5), scene);
+    camera.attachControl(canvas, true);
 
-	loaders = new FBXLoader();
+    // Add lights to the scene
+    var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), scene);
+    var light2 = new BABYLON.PointLight("light2", new BABYLON.Vector3(0, 1, -1), scene);
 
-	loaders.load(file, load, (pro)=> console.log(pro), (e)=> console.log(e) );
-
-	renderer = new WebGLRenderer( { antialias: true } );
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	document.body.appendChild( renderer.domElement );
-	addPlane();
-	controls();
-}
-
-function addPlane(){
-	var geometry = new PlaneGeometry( 1, 1, 1 );
-	var material = new MeshBasicMaterial( {color: 0xffff00, side: DoubleSide} );
-	var plane = new Mesh( geometry, material );
-	plane.rotateX(1.5708);
-	plane.translateZ(0.5);
-	scene.add( plane );
-}
-
-function load(object3d) {
-	console.log(object3d);
-	var mesh = object3d.children[0];
-	console.log(mesh);
-	var materialObj = new MeshBasicMaterial({
-		color: 0xffffff,
-		vertexColors: FaceColors,
-		overdraw: 0.5,
-		side: DoubleSide
-	});
-	mesh.material = materialObj;
-	// mesh.traverse(function(child) {
-	// 	if (child instanceof Mesh) {
-	// 		child.material = materialObj;
-	// 	}
-	// });
-	//var mesh = new Mesh( object3d, material );
-	scene.add(mesh);
+    // Add and manipulate meshes in the scene
+    var sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter:2}, scene);
+    // BABYLON.SceneLoader.Load((a.replace('Alien.glb', ''), 'Alien.glb', engine, function (newScene) {});
+    BABYLON.SceneLoader.Append(a.replace('scene.glb', ''), 'scene.glb', scene);
+    // console.log(a.replace('Alien.glb', ''));
+    return scene;
 };
+/******* End of the create scene function ******/
 
-function controls(){
-	controls = new OrbitControls(camera, renderer.domElement);
-	controls.enableDamping = true;
-	controls.dampingFactor = 0.25;
-	controls.enableZoom = false;
-}
+var scene = createScene(); //Call the createScene function
 
-function animate() {
-	requestAnimationFrame( animate );
+// Register a render loop to repeatedly render the scene
+engine.runRenderLoop(function () {
+  scene.render();
+});
 
-	// mesh.rotation.x += 0.01;
-	// mesh.rotation.y += 0.02;
-
-	renderer.render( scene, camera );
-}
+// Watch for browser/canvas resize events
+window.addEventListener("resize", function () {
+  engine.resize();
+});

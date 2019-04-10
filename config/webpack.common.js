@@ -25,9 +25,6 @@ module.exports = {
 	},
 	module: {
 		rules: [{
-			test: /\.fbx$/,
-			use: 'file-loader'
-		},{
 			test: /\.js$/,
 			exclude: /node_modules/,
 			use: {
@@ -36,7 +33,15 @@ module.exports = {
 					presets: ['env']
 				}
 			}
-	  }]
+		},{
+			test: /\.(glb|gtlf|bin)$/,
+			use: [{
+				loader: 'file-loader',
+				options: {
+					name: 'assets/[hash]-[name].[ext]'
+				}
+			}]
+		}]
 	},
 	plugins: [
 		new CleanWebpackPlugin(['dist'], {root: process.cwd()}),
